@@ -170,4 +170,6 @@ insert into repuesto_utilizado (id_reparacion, id_repuesto, cantidad_utilizada) 
 insert into repuesto_utilizado (id_reparacion, id_repuesto, cantidad_utilizada) values (8, 11, 1);
 insert into repuesto_utilizado (id_reparacion, id_repuesto, cantidad_utilizada) values (9, 12, 1);
 insert into repuesto_utilizado (id_reparacion, id_repuesto, cantidad_utilizada) values (12, 9, 1);
-insert into repuesto_utilizado (id_reparacion, id_repuesto, cantidad_utilizada) values (13, 3, 1);
+insert into repuesto_utilizado (id_reparacion, id_repuesto, cantidad_utilizada) values (12, 3, 1);
+
+commit;
