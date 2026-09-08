@@ -155,6 +155,8 @@ BEGIN
         v_resumen(v_resumen.count).id_sucursal      := tot.id_sucursal;
         v_resumen(v_resumen.count).nombre_sucursal  :=tot.nombre_sucursal;
         v_resumen(v_resumen.count).total_ordenes    :=tot.cantidad;
+
+        insert into resumen_sucursal (id_sucursal, nombre_sucursal, total_reparaciones) values(tot.id_sucursal, tot.nombre_sucursal, tot.cantidad);
     end loop;
         
     -- Calculo bono
