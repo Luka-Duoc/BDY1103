@@ -172,3 +172,14 @@ create table resumen_auditoria(
     sueldo_total      NUMBER(10, 2)
 );
 
+create table entrega_producto(
+    id_entrega number generated always as identity primary key,
+    id_orden number not null,
+    fecha_recepcion date not null,
+    fecha_estimada date not null,
+    fecha_entrega date not null,
+    id_estado_orden number not null,
+    
+    constraint fk_orden_producto foreign key (id_orden) references orden(id_orden),
+    constraint fk_estado foreign key(id_estado_orden) references estado_orden(id_estado)
+);
