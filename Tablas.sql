@@ -183,3 +183,12 @@ create table entrega_producto(
     constraint fk_orden_producto foreign key (id_orden) references orden(id_orden),
     constraint fk_estado foreign key(id_estado_orden) references estado_orden(id_estado)
 );
+
+create table resumen_sucursal(
+    id_resumen_sucursal number(10) generated always as identity primary key,
+    id_sucursal number(10) not null,
+    nombre_sucursal varchar2(100) not null,
+    total_reparaciones number(10) not null,
+    
+    constraint fk_re_sucursal foreign key (id_sucursal) references sucursal(id_sucursal)
+);
