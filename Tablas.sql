@@ -271,14 +271,22 @@ insert into sucursal (nombre_sucursal, direccion, telefono, id_comuna) values ('
 insert into sucursal (nombre_sucursal, direccion, telefono, id_comuna) values ('Sucursal Maipu', 'Av. Pajaritos 2050', 966778899, 5);
 insert into sucursal (nombre_sucursal, direccion, telefono, id_comuna) values ('Sucursal Huechuraba', 'Av. del Parque 4100', 977889900, 10);
 
-insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad) values (16789452, '3', 'Carlos', 'Mendoza', 981122334, 'cmendoza.tec@tecnofix.cl', 'San Diego 890', 'Activo', 1);
-insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad) values (18234567, '9', 'Daniela', 'Munoz', 972233445, 'dmunoz.tec@tecnofix.cl', 'Gran Avenida 4300', 'Activo', 3);
-insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad) values (17456789, '5', 'Esteban', 'Paredes', 963344556, 'eparedes.tec@tecnofix.cl', 'Tobalaba 1450', 'Activo', 2);
-insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad) values (15890123, '1', 'Patricia', 'Arancibia', 954455667, 'parancibia.tec@tecnofix.cl', 'Macul 2100', 'Activo', 4);
-insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad) values (14785236, '9', 'Andres', 'Salazar', 945566778, 'asalazar.tec@tecnofix.cl', 'Rosas 1820', 'Inactivo', 3);
-insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad) values (19012874, '2', 'Javier', 'Contreras', 936677889, 'jcontreras.tec@tecnofix.cl', 'Av. La Florida 8900', 'Activo', 5);
-insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad) values (16450912, '8', 'Beatriz', 'Pena', 927788990, 'bpena.tec@tecnofix.cl', 'Santa Isabel 450', 'Activo', 1);
-insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad) values (17892341, '4', 'Gonzalo', 'Tapia', 918899001, 'gtapia.tec@tecnofix.cl', 'Vespucio Norte 120', 'Activo', 3);
+insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad, sueldo) 
+values (16789452, '3', 'Carlos', 'Mendoza', 981122334, 'cmendoza.tec@tecnofix.cl', 'San Diego 890', 'Activo', 1, 850000);
+insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad, sueldo) 
+values (18234567, '9', 'Daniela', 'Munoz', 972233445, 'dmunoz.tec@tecnofix.cl', 'Gran Avenida 4300', 'Activo', 3, 920000);
+insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad, sueldo) 
+values (17456789, '5', 'Esteban', 'Paredes', 963344556, 'eparedes.tec@tecnofix.cl', 'Tobalaba 1450', 'Activo', 2, 780000);
+insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad, sueldo) 
+values (15890123, '1', 'Patricia', 'Arancibia', 954455667, 'parancibia.tec@tecnofix.cl', 'Macul 2100', 'Activo', 4, 810000);
+insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad, sueldo) 
+values (14785236, '9', 'Andres', 'Salazar', 945566778, 'asalazar.tec@tecnofix.cl', 'Rosas 1820', 'Inactivo', 3, 750000);
+insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad, sueldo) 
+values (19012874, '2', 'Javier', 'Contreras', 936677889, 'jcontreras.tec@tecnofix.cl', 'Av. La Florida 8900', 'Activo', 5, 870000);
+insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad, sueldo) 
+values (16450912, '8', 'Beatriz', 'Pena', 927788990, 'bpena.tec@tecnofix.cl', 'Santa Isabel 450', 'Activo', 1, 890000);
+insert into tecnico (rut, dv_run, nombre, apellido, telefono, correo, direccion, estado, id_especialidad, sueldo) 
+values (17892341, '4', 'Gonzalo', 'Tapia', 918899001, 'gtapia.tec@tecnofix.cl', 'Vespucio Norte 120', 'Activo', 3, 830000);
 
 insert into equipo (descripcion, id_modelo, id_tipo_dispositivo) values ('Notebook no enciende tras descarga en puerto usb', 1, 1);
 insert into equipo (descripcion, id_modelo, id_tipo_dispositivo) values ('Notebook con display quebrado por presion en mochila', 3, 1);
