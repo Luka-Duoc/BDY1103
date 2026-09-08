@@ -86,6 +86,10 @@ DECLARE
     
 BEGIN
     execute immediate 'truncate table resumen_auditoria';
+    execute immediate 'truncate table resumen_sucursal';
+    execute immediate 'truncate table log_error';
+    execute immediate 'truncate table entrega_producto';
+
     -- Fecha
     for o in c_orden loop
         
@@ -110,6 +114,8 @@ BEGIN
         else
             v_estado := 'Sin avances';        
         end if; 
+
+        insert into entrega_orden(id_orden, fecha_recepcion, fecha_estimada, fecha_entrega, id_estado_orden) values(o.id_orden, o.fecha_recepcion, o.fecha_estimada, o.fecha_entrega, o.id_estado_orden);
     
     end loop;
     
