@@ -84,8 +84,27 @@ DECLARE
     
     v_bono  number;
     
+    
+    -- TECNICO INACTIVO
+    
+    e_tec_inactivo EXCEPTION;
+    
+    cursor c_inactivos is 
+        select
+            t.id_tecnico,
+            t.nombre || ' ' || t.apellido as nombre,
+            r.id_reparacion,
+            o.id_orden,
+            o.fecha_entrega
+        from tecnico t
+        join reparacion r on t.id_tecnico = r.id_tecnico
+        join orden o on r.id_orden = o.id_orden
+        where t.estado = 'Inactivo' and o.fecha_entrega is null;       
+        
+        v_total_inactivos   number    := 0;
+    
 BEGIN
-    execute immediate 'truncate table resumen_auditoria';
+    execute immediate 'truncate table resumen_tecnico';
     execute immediate 'truncate table resumen_sucursal';
     execute immediate 'truncate table log_error';
     execute immediate 'truncate table entrega_producto';
@@ -115,7 +134,7 @@ BEGIN
             v_estado := 'Sin avances';        
         end if; 
 
-        insert into entrega_orden(id_orden, fecha_recepcion, fecha_estimada, fecha_entrega, id_estado_orden) values(o.id_orden, o.fecha_recepcion, o.fecha_estimada, o.fecha_entrega, o.id_estado_orden);
+        insert into entrega_producto(id_orden, fecha_recepcion, fecha_estimada, fecha_entrega, id_estado_orden) values(o.id_orden, o.fecha_recepcion, o.fecha_estimada, o.fecha_entrega, o.id_estado_orden);
     
     end loop;
     
@@ -168,7 +187,7 @@ BEGIN
             end if;
         end loop;        
         
-        insert into resumen_auditoria (
+        insert into resumen_tecnico (
                                             fecha_proceso,
                                             id_tecnico,
                                             nombre_tecnico,
@@ -185,14 +204,38 @@ BEGIN
                                             v_bono,
                                             (t.sueldo + v_bono)
                                         );
-    end loop;    
+    end loop;
+    
+    
+    -- Busqueda inactivos
+    
+    for t in c_inactivos loop
+        v_total_inactivos := v_total_inactivos + 1;
+        
+        begin
+            RAISE e_tec_inactivo;
+            
+        exception
+            when e_tec_inactivo then
+                insert into log_error (fecha_error, descripcion) values(sysdate, 'Tecnico inactivo: ' ||  t.nombre 
+                                                                        || ' en orden: ' || t.id_orden 
+                                                                        || ' Reparacion: ' || t.id_reparacion);
+                                                                        
+                update reparacion set id_tecnico = null where id_reparacion = t.id_reparacion;
+                                                                        
+                dbms_output.put_line('Tecnico ' || t.nombre || ' desasignado de la reparacion ' || t.id_reparacion);
+        end; 
+    end loop; 
+    
+    if v_total_inactivos = 0 then
+        dbms_output.put_line('No hay tecnicos inactivos');
+    else 
+        dbms_output.put_line('Tecnicos inactivos: ' || v_total_inactivos);
+        commit;
+    end if;
+
+    
 END;
 /
-
-
-
-
-
-
 
     
