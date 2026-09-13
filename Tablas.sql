@@ -14,6 +14,9 @@ drop table estado_orden cascade constraints;
 drop table especialidad cascade constraints;
 drop table bono_equipos_reparados cascade constraints;
 drop table log_error cascade constraints;
+drop table resumen_sucursal cascade constraints;
+drop table resumen_tecnico cascade constraints;
+drop table entrega_producto cascade constraints;
 
 create table marca (
     id_marca number(10) generated always as identity primary key,
@@ -124,7 +127,7 @@ create table orden (
     id_orden number(10) generated always as identity primary key,
     fecha_recepcion date not null,
     fecha_estimada date not null,
-    fecha_entrega date not null,
+    fecha_entrega date,
     descripcion varchar2(200) not null,
     id_cliente number(10) not null,
     id_estado_orden number(10) not null,
@@ -141,11 +144,11 @@ create table orden (
 create table reparacion (
     id_reparacion number(10) generated always as identity primary key,
     fecha_inicio date not null,
-    fecha_finalizacion date not null,
+    fecha_finalizacion date,
     diagnostico varchar2(100) not null,
     descripcion varchar2(200) not null,
     id_orden number(10) not null,
-    id_tecnico number(10) not null,
+    id_tecnico number(10),
     
     constraint fk_orden foreign key (id_orden) references orden (id_orden),
     constraint fk_tecnico foreign key (id_tecnico) references tecnico (id_tecnico)
@@ -177,7 +180,7 @@ create table entrega_producto(
     id_orden number not null,
     fecha_recepcion date not null,
     fecha_estimada date not null,
-    fecha_entrega date not null,
+    fecha_entrega date,
     id_estado_orden number not null,
     
     constraint fk_orden_producto foreign key (id_orden) references orden(id_orden),
