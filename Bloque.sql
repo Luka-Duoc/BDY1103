@@ -125,16 +125,26 @@ BEGIN
         
         if v_dias_atraso <= 0 then
             v_estado := 'En plazo';
-        
         elsif v_dias_atraso between 1 and 3 then
             v_estado := 'Atrasado';
         elsif v_dias_atraso between 4 and 7 then
             v_estado := 'Atraso considerable';
         else
             v_estado := 'Sin avances';        
-        end if; 
-
-        insert into entrega_producto(id_orden, fecha_recepcion, fecha_estimada, fecha_entrega, id_estado_orden) values(o.id_orden, o.fecha_recepcion, o.fecha_estimada, o.fecha_entrega, o.id_estado_orden);
+        end if;
+        
+         insert into entrega_producto(
+        id_orden, 
+        fecha_recepcion,
+        fecha_estimada, 
+        fecha_entrega,
+        descripcion_entrega,
+        id_estado_orden) values(o.id_orden,
+        o.fecha_recepcion, 
+        o.fecha_estimada, 
+        o.fecha_entrega,
+        v_estado,
+        o.id_estado_orden);
     
     end loop;
     
@@ -237,5 +247,3 @@ BEGIN
     
 END;
 /
-
-    

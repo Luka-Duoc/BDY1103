@@ -181,6 +181,7 @@ create table entrega_producto(
     fecha_recepcion date not null,
     fecha_estimada date not null,
     fecha_entrega date,
+    descripcion_entrega varchar2(75) not null,
     id_estado_orden number not null,
     
     constraint fk_orden_producto foreign key (id_orden) references orden(id_orden),
