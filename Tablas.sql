@@ -16,7 +16,7 @@ drop table bono_equipos_reparados cascade constraints;
 drop table log_error cascade constraints;
 drop table resumen_sucursal cascade constraints;
 drop table resumen_tecnico cascade constraints;
-drop table entrega_producto cascade constraints;
+drop table entrega_orden cascade constraints;
 
 create table marca (
     id_marca number(10) generated always as identity primary key,
@@ -175,7 +175,7 @@ create table resumen_tecnico(
     sueldo_total      NUMBER(10, 2)
 );
 
-create table entrega_producto(
+create table entrega_orden(
     id_entrega number generated always as identity primary key,
     id_orden number not null,
     fecha_recepcion date not null,
