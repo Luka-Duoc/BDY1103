@@ -1,14 +1,14 @@
 set serveroutput on;
 
 DECLARE
-    cursor c_orden is 
+    cursor c_orden_entrega is 
         select
             id_orden,
             fecha_recepcion,
             fecha_estimada,
             fecha_entrega,
             id_estado_orden
-        from orden;
+        from orden where id_estado_orden = 8;
     
     -- Fechas
     v_fecha_corte           date;
@@ -107,10 +107,10 @@ BEGIN
     execute immediate 'truncate table resumen_tecnico';
     execute immediate 'truncate table resumen_sucursal';
     execute immediate 'truncate table log_error';
-    execute immediate 'truncate table entrega_producto';
+    execute immediate 'truncate table entrega_orden';
 
     -- Fecha
-    for o in c_orden loop
+    for o in c_orden_entrega loop
         
         if o.fecha_entrega is not null then
             v_fecha_corte := o.fecha_entrega;
@@ -124,7 +124,7 @@ BEGIN
         v_dias_estadia_total := v_fecha_corte - o.fecha_recepcion;
         
         if v_dias_atraso <= 0 then
-            v_estado := 'En plazo';
+            v_estado := 'Entregado a tiempo';
         elsif v_dias_atraso between 1 and 3 then
             v_estado := 'Atrasado';
         elsif v_dias_atraso between 4 and 7 then
@@ -133,7 +133,7 @@ BEGIN
             v_estado := 'Sin avances';        
         end if;
         
-         insert into entrega_producto(
+         insert into entrega_orden(
         id_orden, 
         fecha_recepcion,
         fecha_estimada, 
