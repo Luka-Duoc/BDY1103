@@ -1,6 +1,7 @@
 set serveroutput on;
 
 DECLARE
+    -- Tiempo de entrega de ordenes
     cursor c_orden_entrega is 
         select
             id_orden,
@@ -10,7 +11,6 @@ DECLARE
             id_estado_orden
         from orden where id_estado_orden = 8;
     
-    -- Fechas
     v_fecha_corte           date;
     v_dias_atraso           number;
     v_dias_estadia_total    number;
@@ -184,9 +184,9 @@ BEGIN
     end loop; 
     
     if v_total_inactivos = 0 then
-        dbms_output.put_line('No hay tecnicos inactivos');
+        dbms_output.put_line('No hay tecnicos inactivos asignados a reparaciones');
     else 
-        dbms_output.put_line('Tecnicos inactivos: ' || v_total_inactivos);
+        dbms_output.put_line('Tecnicos inactivos asinados a reparaciones: ' || v_total_inactivos);
         commit;
     end if;
 
