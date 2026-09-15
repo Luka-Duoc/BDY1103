@@ -17,6 +17,7 @@ drop table log_error cascade constraints;
 drop table resumen_sucursal cascade constraints;
 drop table resumen_tecnico cascade constraints;
 drop table entrega_orden cascade constraints;
+drop table alerta_stock cascade constraints;
 
 create table marca (
     id_marca number(10) generated always as identity primary key,
@@ -195,4 +196,18 @@ create table resumen_sucursal(
     total_reparaciones number(10) not null,
     
     constraint fk_re_sucursal foreign key (id_sucursal) references sucursal(id_sucursal)
+);
+
+
+create table alerta_stock (
+    id_alerta            NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    fecha_alerta         DATE DEFAULT SYSDATE,
+    id_reparacion        NUMBER,
+    id_repuesto          NUMBER,
+    nombre_repuesto      VARCHAR2(100),
+    cantidad_requerida   NUMBER,
+    stock_disponible     NUMBER,
+    stock_minimo         NUMBER,
+    nivel_alerta         VARCHAR2(30), 
+    detalle              VARCHAR2(250)
 );

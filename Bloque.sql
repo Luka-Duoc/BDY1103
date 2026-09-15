@@ -16,31 +16,6 @@ DECLARE
     v_dias_estadia_total    number;
     v_estado                varchar2(50);
     
-    -- Reparación
-    cursor c_reparacion is
-        select
-            r.id_reparacion,
-            r.id_orden,
-            r.diagnostico
-        from reparacion r
-        join orden o on r.id_orden = o.id_orden;
-        
-    cursor c_repuestos_reparacion (p_id_reparacion number) is
-        select
-            ru.id_repuesto,
-            sum(ru.cantidad_utilizada) as cantidad_utilizada,
-            rp.nombre_repuesto,
-            rp.stock_disponible,
-            rp.stock_minimo
-        from repuesto_utilizado ru
-        join repuesto rp on ru.id_repuesto = rp.id_repuesto
-        where ru.id_reparacion = p_id_reparacion
-        group by ru.id_repuesto, rp.nombre_repuesto, rp.stock_disponible, rp.stock_minimo;
-        
-    e_stock_insuficiente EXCEPTION;
-    
-    v_error boolean;
-    
     -- Cantidad Ordenes
     
     type r_resumen_sucursal is record (
@@ -133,7 +108,7 @@ BEGIN
             v_estado := 'Sin avances';        
         end if;
         
-         insert into entrega_orden(
+        insert into entrega_orden(
         id_orden, 
         fecha_recepcion,
         fecha_estimada, 
@@ -145,35 +120,6 @@ BEGIN
         o.fecha_entrega,
         v_estado,
         o.id_estado_orden);
-    
-    end loop;
-    
-    -- Stock
-    for rep in c_reparacion loop
-        v_error := false;
-        
-        for item in c_repuestos_reparacion(rep.id_reparacion) loop
-            begin
-                if item.cantidad_utilizada > item.stock_disponible then
-                    raise e_stock_insuficiente;
-                else 
-                    
-                    if (item.stock_disponible - item.cantidad_utilizada) <= item.stock_minimo then
-                        dbms_output.put_line('Stock pronto a acabarse/acabado');
-                    end if;
-                    
-                end if;
-
-            exception
-                when e_stock_insuficiente then
-                    v_error := true;
-                    insert into log_error (fecha_error, descripcion) values(sysdate, 'Stock insuficiente ' || rep.id_reparacion ||': Repuesto ' || item.nombre_repuesto);                                                         
-            end;
-        end loop;
-        
-        if v_error then
-            dbms_output.put_line('Reparación ' || rep.id_reparacion || ' procesada con advertencias de stock.');
-        end if;
     
     end loop;
     
@@ -244,6 +190,83 @@ BEGIN
         commit;
     end if;
 
+    
+END;
+/
+
+
+/*BLOQUE MANEJO DE STOCK*/
+
+DECLARE
+    
+    cursor c_analisis_stock is
+        select
+            r.id_reparacion,
+            r.id_orden,
+            rp.id_repuesto,
+            rp.nombre_repuesto,
+            sum(ru.cantidad_utilizada) as cantidad_utilizada,
+            rp.stock_disponible,
+            rp.stock_minimo
+        from reparacion r
+        join repuesto_utilizado ru on ru.id_reparacion = r.id_reparacion
+        join repuesto rp on ru.id_repuesto = rp.id_repuesto
+        group by
+            r.id_reparacion, 
+            r.id_orden, 
+            rp.id_repuesto, 
+            rp.nombre_repuesto, 
+            rp.stock_disponible, 
+            rp.stock_minimo;
+            
+    v_total_quiebre     number  := 0;
+    v_total_criticos    number  := 0;
+    
+BEGIN
+    
+    execute immediate 'truncate table alerta_stock';
+    
+    for reg in c_analisis_stock loop
+        
+        if reg.cantidad_utilizada > reg.stock_disponible then
+            v_total_quiebre := v_total_quiebre + 1;
+            
+            insert into alerta_stock (id_reparacion, id_repuesto, nombre_repuesto,
+                cantidad_requerida, stock_disponible, stock_minimo,
+                nivel_alerta, detalle) values (
+                                                reg.id_reparacion,
+                                                reg.id_repuesto,
+                                                reg.nombre_repuesto,
+                                                reg.cantidad_utilizada,
+                                                reg.stock_disponible,
+                                                reg.stock_minimo,
+                                                'QUIEBRE DE STOCK',
+                                                'Faltante: ' || (reg.cantidad_utilizada - reg.stock_disponible) || ' unidad(es) para orden: ' || reg.id_orden
+                                            );
+            
+        elsif (reg.stock_disponible - reg.cantidad_utilizada) <= reg.stock_minimo then
+            v_total_criticos := v_total_criticos + 1;
+            
+            insert into alerta_stock (
+                id_reparacion, id_repuesto, nombre_repuesto,
+                cantidad_requerida, stock_disponible, stock_minimo,
+                nivel_alerta, detalle) values (
+                                                reg.id_reparacion,
+                                                reg.id_repuesto,
+                                                reg.nombre_repuesto,
+                                                reg.cantidad_utilizada,
+                                                reg.stock_disponible,
+                                                reg.stock_minimo,
+                                                'STOCK CRITICO',
+                                                'Remanente proyectado: ' || (reg.stock_disponible - reg.cantidad_utilizada) || ' (Mínimo: ' || reg.stock_minimo || ')'
+                                            );
+            
+        end if;
+    end loop;
+    commit;
+    
+    dbms_output.put_line('Alerta por repuestos sin stock: ' || v_total_quiebre);
+    dbms_output.put_line('Alerta por repuestos con poco stock: ' || v_total_criticos);
     
 END;
 /
