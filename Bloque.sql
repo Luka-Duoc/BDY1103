@@ -40,15 +40,20 @@ DECLARE
     
     
     -- Bono Tecnicos
-    cursor c_total_reparaciones is
+    cursor c_tecnicos is 
+        select 
+            id_tecnico,
+            nombre || ' '|| apellido as nombre,
+            sueldo
+        from tecnico
+        where estado = 'Activo';
+
+    cursor c_reparaciones_tecnico (p_id_tecnico number) is
         select
-            t.id_tecnico,
-            t.nombre,
-            count(r.id_reparacion) as total,
-            t.sueldo
-        from tecnico t
-        left join reparacion r on t.id_tecnico = r.id_tecnico
-        group by t.id_tecnico, t.nombre, t.sueldo;
+            r.id_reparacion,
+            r.id_orden
+        from reparacion r
+        where r.id_tecnico = p_id_tecnico;
         
     cursor c_bonos is
         select
@@ -58,7 +63,7 @@ DECLARE
         from bono_equipos_reparados;
     
     v_bono  number;
-    
+    v_total_reparaciones number;
     
     -- TECNICO INACTIVO
     
@@ -109,17 +114,17 @@ BEGIN
         end if;
         
         insert into entrega_orden(
-        id_orden, 
-        fecha_recepcion,
-        fecha_estimada, 
-        fecha_entrega,
-        descripcion_entrega,
-        id_estado_orden) values(o.id_orden,
-        o.fecha_recepcion, 
-        o.fecha_estimada, 
-        o.fecha_entrega,
-        v_estado,
-        o.id_estado_orden);
+                                    id_orden, 
+                                    fecha_recepcion,
+                                    fecha_estimada, 
+                                    fecha_entrega,
+                                    descripcion_entrega,
+                                    id_estado_orden) values(o.id_orden,
+                                    o.fecha_recepcion, 
+                                    o.fecha_estimada, 
+                                    o.fecha_entrega,
+                                    v_estado,
+                                    o.id_estado_orden);
     
     end loop;
     
@@ -135,31 +140,39 @@ BEGIN
     end loop;
         
     -- Calculo bono
-    for t in c_total_reparaciones loop
-        v_bono := 0;
+    for tec in c_tecnicos loop
+        v_total_reparaciones := 0;
+
+        for rep in c_reparaciones_tecnico(tec.id_tecnico) loop
+            v_total_reparaciones := v_total_reparaciones + 1;
+        end loop;
+        
+        v_bono     := 0;
         for b in c_bonos loop
-            if t.total between b.min and b.max then
-                v_bono := trunc(t.sueldo * (b.porc / 100));
+        
+            if v_total_reparaciones between b.min and b.max then
+                v_bono := trunc(tec.sueldo * (b.porc / 100));
             end if;
-        end loop;        
+            
+        end loop;
         
         insert into resumen_tecnico (
-                                            fecha_proceso,
-                                            id_tecnico,
-                                            nombre_tecnico,
-                                            reparaciones,
-                                            sueldo_base,
-                                            monto_bono,
-                                            sueldo_total
-                                        ) values (
-                                            sysdate,
-                                            t.id_tecnico,
-                                            t.nombre,
-                                            t.total,
-                                            t.sueldo,
-                                            v_bono,
-                                            (t.sueldo + v_bono)
-                                        );
+                                    fecha_proceso,
+                                    id_tecnico,
+                                    nombre_tecnico,
+                                    reparaciones,
+                                    sueldo_base,
+                                    monto_bono,
+                                    sueldo_total) values (
+                                    sysdate,
+                                    tec.id_tecnico,
+                                    tec.nombre,
+                                    v_total_reparaciones,
+                                    tec.sueldo,
+                                    v_bono,
+                                    (tec.sueldo + v_bono)       
+                                    );
+        
     end loop;
     
     
