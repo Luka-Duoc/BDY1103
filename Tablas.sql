@@ -170,7 +170,7 @@ create table resumen_tecnico(
     fecha_proceso    date default sysdate,
     id_tecnico       number(10) not null,
     nombre_tecnico   varchar2(100) not null,
-    reparaciones     number(10 not null),
+    reparaciones     number(10) not null,
     sueldo_base      number(10) not null,
     monto_bono       number(10) not null,
     sueldo_total     number(10) not null
