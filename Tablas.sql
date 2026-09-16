@@ -168,12 +168,12 @@ create table repuesto_utilizado (
 create table resumen_tecnico(
     id_resumen       number generated always as identity primary key,
     fecha_proceso    date default sysdate,
-    id_tecnico       number(10),
-    nombre_tecnico   varchar2(100),
-    reparaciones     number(10),
-    sueldo_base      number(10, 2),
-    monto_bono       number(10, 2),
-    sueldo_total     number(10, 2)
+    id_tecnico       number(10) not null,
+    nombre_tecnico   varchar2(100) not null,
+    reparaciones     number(10 not null),
+    sueldo_base      number(10) not null,
+    monto_bono       number(10) not null,
+    sueldo_total     number(10) not null
 );
 
 create table entrega_orden(
@@ -181,7 +181,7 @@ create table entrega_orden(
     id_orden number not null,
     fecha_recepcion date not null,
     fecha_estimada date not null,
-    fecha_entrega date,
+    fecha_entrega date not null,
     descripcion_entrega varchar2(75) not null,
     id_estado_orden number not null,
     
@@ -202,12 +202,12 @@ create table resumen_sucursal(
 create table alerta_stock (
     id_alerta            number(10) generated always as identity primary key,
     fecha_alerta         date default sysdate,
-    id_reparacion        number(10),
-    id_repuesto          number(10),
-    nombre_repuesto      varchar2(100),
-    cantidad_requerida   number(10),
-    stock_disponible     number(10),
-    stock_minimo         number(10),
-    nivel_alerta         varchar2(30), 
-    detalle              varchar2(250)
+    id_reparacion        number(10) not null,
+    id_repuesto          number(10) not null,
+    nombre_repuesto      varchar2(100) not null,
+    cantidad_requerida   number(10) not null,
+    stock_disponible     number(10) not null,
+    stock_minimo         number(10) not null,
+    nivel_alerta         varchar2(30) not null, 
+    detalle              varchar2(250) not null
 );
