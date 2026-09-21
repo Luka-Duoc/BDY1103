@@ -199,7 +199,7 @@ BEGIN
     if v_total_inactivos = 0 then
         dbms_output.put_line('No hay tecnicos inactivos asignados a reparaciones');
     else 
-        dbms_output.put_line('Tecnicos inactivos asinados a reparaciones: ' || v_total_inactivos);
+        dbms_output.put_line('Tecnicos inactivos asignados a reparaciones: ' || v_total_inactivos);
         commit;
     end if;
 
